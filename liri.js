@@ -40,7 +40,7 @@ var twitterTime = function(timeStamp){
   return newTime;
 }
 
-
+//Prompt the user in the command line when the program begins
 inquirer.prompt([
   {
     type: "list",
@@ -53,53 +53,17 @@ inquirer.prompt([
   if(user.doingWhat == "my-tweets"){
     twitterCall(client);
   }
-});
 
-/*
-  {
-    type: "checkbox",
-    name: "carryingWhat",
-    message: "What are you carrying in your hands??",
-    choices: ["TV", "Slice of Toast", "Butter Knife"]
-  },
-
-  {
-    type: "confirm",
-    name: "canLeave",
-    message: "Can you leave now?"
-  },
-
-  {
-    type: "password",
-    name: "myPassword",
-    message: "Okay fine. You can stay. But only if you say the magic password."
-  }
-
-]).then(function(user) {
-
-  // If the user guesses the password...
-  if (user.myPassword === "myHouse") {
-
-    console.log("==============================================");
-    console.log("");
-    console.log("Well a deal's a deal " + user.name);
-    console.log("You can stay as long as you like.");
-    console.log("Just put down the " + user.carryingWhat.join(" and ") + ". It's kind of freaking me out.");
-    console.log("");
-    console.log("==============================================");
-  }
-
-
-  // If the user doesn't guess the password...
-  else {
-
-    console.log("==============================================");
-    console.log("");
-    console.log("Sorry " + user.name);
-    console.log("I'm calling the cops!");
-    console.log("");
-    console.log("==============================================");
-
+  if(user.doingWhat == "spotify-this-song"){
+    inquirer.prompt([
+      {
+         type: "input",
+         name: "song",
+         message: "Please enter a song name"
+      }
+    ]).then(function(user){
+      console.log(user.song);
+      //spotifyCall();
+    });
   }
 });
-*/
