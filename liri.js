@@ -14,10 +14,12 @@ console.log("in client" + client);
 var params = {screen_name: 'dummydev84', count: 20};
 client.get('statuses/user_timeline', params, function(error, tweets, response) {
   if (!error) {
+console.log(tweets);
 
-
-    console.log(tweets);
-
-
+    console.log(tweets.length);
+    for(var i = 0; i < tweets.length; i++){
+      console.log(tweets[i].text);
+      console.log(tweets[i].created_at);
+    }
   }
 });
