@@ -6,21 +6,18 @@ var moment = require('moment');
 var inquirer = require('inquirer');
 var Spotify = require('node-spotify-api');
 var request = require('request');
+var fs = require('fs');
 
 var client = new Twitter(keys.twitter);
 var spotify = new Spotify(keys.spotify);
+var ombdKey = keys.Ombd.key;
 
-//var spotify = new Spotify(keys.spotify);
-//var client = new Twitter(keys.twitter);
-//console.log("in client" + client);
-//console.log("IN SPOTIFY: " + keys.spotify);
-//console.log("IN  CLIENT: " + keys.twitter);
-
-//console.log(keys.Ombd.key);
 
 var ombdCall = function(key, movie){
 
-
+if (movie == ""){
+    movie = 'Mr. Nobody';
+}
   console.log('THE MOVE IS ' + movie);
   request('http://www.omdbapi.com/?i=tt3896198&apikey=' + key + '&t=' + movie, function (error, response, body) {
     console.log('error:', error); // Print the error if one occurred
@@ -47,6 +44,10 @@ var ombdCall = function(key, movie){
 
 
 var spotifyCall = function(spotify, songname){
+
+  if (songname == ""){
+      songname = 'The Sign';
+  }
 
   spotify.search({ type: 'track', query: songname, limit: 2 }, function(err, data) {
     if (err) {
@@ -75,9 +76,7 @@ var spotifyCall = function(spotify, songname){
 
 }
 
-
-
-
+//call twitter api and check dummydev84 most recent 20 tweets
 var twitterCall = function(client){
 var params = {screen_name: 'dummydev84', count: 20};
 client.get('statuses/user_timeline', params, function(error, tweets, response) {
@@ -106,22 +105,39 @@ var twitterTime = function(timeStamp){
   return newTime;
 }
 
+var doWhatItSaysCall = function(){
+  //read from random.txt and perform the requested call with the QUERY
+  //format for the file is call request type, QUERY
+
+  fs.readFile('random.txt', 'utf8', function (err, file) {
+    if (err) throw err;
+    var fromTheFile = file.split(',');
+    var query = fromTheFile[1];
+
+    if(fromTheFile[0] == 'spotify-this-song'){
+      spotifyCall(spotify, query);
+    } else {
+      ombdCall(ombdKey, query);
+    }
+  });
+}
+
 
 //Prompt the user in the command line when the program begins
 inquirer.prompt([
   {
     type: "list",
-    name: "doingWhat",
+    name: "performThis",
     message: "Hello! I'm LiRiBoT :-) What would you like to do?",
     choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says"]
   }
 ]).then(function(user){
-  console.log(user.doingWhat);
-  if(user.doingWhat == "my-tweets"){
+//  console.log(user.doingWhat);
+  if(user.performThis == "my-tweets"){
     twitterCall(client);
   }
   //if user picks spotify-this-song
-  if(user.doingWhat == "spotify-this-song"){
+  if(user.performThis == "spotify-this-song"){
     inquirer.prompt([
       {
          type: "input",
@@ -131,10 +147,9 @@ inquirer.prompt([
     ]).then(function(user){
     //  console.log(user.song);
       spotifyCall(spotify, user.song);
-      //spotifyCall();
     });
   }
-    if(user.doingWhat == "movie-this"){
+    if(user.performThis == "movie-this"){
       inquirer.prompt([
         {
            type: "input",
@@ -143,8 +158,14 @@ inquirer.prompt([
         }
       ]).then(function(user){
       //  console.log(user.movie);
-        ombdCall(keys.Ombd.key, user.movie);
+        ombdCall(ombdKey, user.movie);
         //spotifyCall();
       });
   }
-});
+  // did the user pickdp-what-it-says
+  if(user.performThis == "do-what-it-says"){
+      doWhatItSaysCall();
+  }
+
+
+}); //prompt
