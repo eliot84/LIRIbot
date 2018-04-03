@@ -122,6 +122,12 @@ var doWhatItSaysCall = function(){
   });
 }
 
+//add user prompt interaction info, without their permission not good :-(
+var logInfo = function(addInfo){
+    fs.appendFile('log.txt', '  ' + addInfo, function (err) {
+        if (err) throw err;
+    });
+}
 
 //Prompt the user in the command line when the program begins
 inquirer.prompt([
@@ -132,7 +138,9 @@ inquirer.prompt([
     choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says"]
   }
 ]).then(function(user){
-//  console.log(user.doingWhat);
+
+    logInfo(user.performThis);
+
   if(user.performThis == "my-tweets"){
     twitterCall(client);
   }
@@ -145,7 +153,7 @@ inquirer.prompt([
          message: "Please enter a song name"
       }
     ]).then(function(user){
-    //  console.log(user.song);
+      logInfo(user.song);
       spotifyCall(spotify, user.song);
     });
   }
@@ -157,7 +165,7 @@ inquirer.prompt([
            message: "Please enter a movie title"
         }
       ]).then(function(user){
-      //  console.log(user.movie);
+        logInfo(user.movie);
         ombdCall(ombdKey, user.movie);
         //spotifyCall();
       });
