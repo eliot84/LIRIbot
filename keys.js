@@ -12,6 +12,10 @@ exports.spotify = {
   secret: process.env.SPOTIFY_SECRET
 };
 
+exports.Ombd = {
+  key: process.env.OMBD_KEY
+}
+
 /*
 module.exports = {
   twitter: twitter,

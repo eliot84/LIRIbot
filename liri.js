@@ -5,15 +5,46 @@ var Twitter = require('twitter');
 var moment = require('moment');
 var inquirer = require('inquirer');
 var Spotify = require('node-spotify-api');
-
+var request = require('request');
 
 var client = new Twitter(keys.twitter);
 var spotify = new Spotify(keys.spotify);
+
 //var spotify = new Spotify(keys.spotify);
 //var client = new Twitter(keys.twitter);
 //console.log("in client" + client);
 //console.log("IN SPOTIFY: " + keys.spotify);
 //console.log("IN  CLIENT: " + keys.twitter);
+
+//console.log(keys.Ombd.key);
+
+var ombdCall = function(key, movie){
+
+
+  console.log('THE MOVE IS ' + movie);
+  request('http://www.omdbapi.com/?i=tt3896198&apikey=' + key + '&t=' + movie, function (error, response, body) {
+    console.log('error:', error); // Print the error if one occurred
+    console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+
+    var result = JSON.parse(body);
+
+    //console.log(result.Title); // Print the HTML for the Google homepage.
+    console.log("########################");
+    console.log("MOVIES QUERY: ");
+    console.log("Title: " + result.Title);
+    console.log("Year: " + result.Year);
+    console.log("IMDB Rating: " + result.imdbRating);
+    console.log("Rotten Tomatoes Rating: " + result.Ratings[1].Value);
+    console.log("Country Produced: " + result.Country);
+    console.log("Language: " + result.Language);
+    console.log("Plot: " + result.Plot);
+    console.log("Plot: " + result.Actors);
+    console.log("########################");
+    console.log("");
+  });
+
+}
+
 
 var spotifyCall = function(spotify, songname){
 
@@ -61,15 +92,21 @@ client.get('statuses/user_timeline', params, function(error, tweets, response) {
           console.log("");
       } //end for
      console.log("########################");
+     console.log("");
+
   } // end if
 }); //end client.get
 } //close twitterCall
 //twitterCall(client);
+
+
 //Takes the created timestamp at provided by twitter and reformats the time stamp to something legible.
 var twitterTime = function(timeStamp){
   var newTime = moment(timeStamp, "ddd MMM D HH:mm:ss ZZ YYYY").format('MMMM D, YYYY h:mma');
   return newTime;
 }
+
+
 //Prompt the user in the command line when the program begins
 inquirer.prompt([
   {
@@ -92,9 +129,22 @@ inquirer.prompt([
          message: "Please enter a song name"
       }
     ]).then(function(user){
-      console.log(user.song);
+    //  console.log(user.song);
       spotifyCall(spotify, user.song);
       //spotifyCall();
     });
+  }
+    if(user.doingWhat == "movie-this"){
+      inquirer.prompt([
+        {
+           type: "input",
+           name: "movie",
+           message: "Please enter a movie title"
+        }
+      ]).then(function(user){
+      //  console.log(user.movie);
+        ombdCall(keys.Ombd.key, user.movie);
+        //spotifyCall();
+      });
   }
 });
