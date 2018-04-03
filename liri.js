@@ -120,6 +120,16 @@ var logInfo = function(addInfo){
     });
 }
 
+var liribot = function(){
+console.log(" _     _      _ _           _   ");
+console.log("| |   (_)_ __(_) |__   ___ | |_ ");
+console.log("| |   | | '__| | '_ ) / _ )| __|");
+console.log("| |___| | |  | | |_) | (_) | |_" );
+console.log("|_____|_|_|  |_|_.__/ (___/ (__|");
+}
+
+//Prompt the user in the command line when the program begins
+liribot();
 //Prompt the user in the command line when the program begins
 inquirer.prompt([
   {
